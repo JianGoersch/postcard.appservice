@@ -1,0 +1,25 @@
+name: Docker Image CI & CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: postcardjian.azurecr.io/postcard
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASS }}
+        
+    - run: | 
+        docker build -t postcardjian.azurecr.io/postcardappservice:${{github.run_number}} .
+        docker push postcardjian.azurecr.io/postcardappservice:${{github.run_number}}
